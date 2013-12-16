@@ -1,18 +1,36 @@
-CFLAGS=-g -O2 -Wall -Wextra -Iscrypt -Iscrypt/lib/crypto -Iscrypt/lib/scryptenc -Iscrypt/lib/util -DNDEBUG -DHAVE_CONFIG_H $(OPTFLAGS)
+SCRYPT = scrypt-1.1.6
 
-SOURCES=$(wildcard scrypt/lib/crypto/*.c scrypt/lib/scryptenc/*.c scrypt/lib/util/*.c)
+CONFIG_H = $(SCRYPT)/config.h
+
+CFLAGS=-g -O2 -fPIC -lcrypto -DHAVE_CONFIG_H \
+       -I$(SCRYPT) \
+       -I$(SCRYPT)/lib/crypto \
+       -I$(SCRYPT)/lib/scryptenc \
+       -I$(SCRYPT)/lib/util
+
+SOURCES=$(SCRYPT)/lib/crypto/crypto_aesctr.c \
+	$(SCRYPT)/lib/crypto/crypto_scrypt-nosse.c \
+	$(SCRYPT)/lib/scryptenc/scryptenc.c \
+	$(SCRYPT)/lib/scryptenc/scryptenc_cpuperf.c \
+	$(SCRYPT)/lib/util/memlimit.c \
+	$(SCRYPT)/lib/crypto/sha256.c \
+	$(SCRYPT)/lib/util/warn.c
+
 OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 
-TARGET=libscrypt.a
+all: libscrypt.a libscrypt.so
 
-all: $(TARGET)
+$(CONFIG_H):
+	cd $(SCRYPT) && ./configure
 
-$(TARGET): CFLAGS += -fPIC
-$(TARGET): $(OBJECTS)
+libscrypt.a: $(CONFIG_H) $(OBJECTS)
 	ar rcs $@ $(OBJECTS)
 	ranlib $@
 
+libscrypt.so: $(CONFIG_H) $(OBJECTS)
+	$(CC) $(CFLAGS) -shared -o $@ $(OBJECTS)
+
 clean:
-	rm -rf $(OBJECTS) $(TESTS)
-	find . -name "*.gc*" -exec rm {} \;
-	rm -rf `find . -name "*.dSYM" -print`
+	cd $(SCRYPT) && make clean
+	rm -f libscrypt.a libscrypt.so
+	rm -rf $(OBJECTS)
