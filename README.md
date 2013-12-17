@@ -9,7 +9,7 @@ This is a simple `Makefile` for compiling the scrypt source as a library.
 
 3. Run `make`.
 
-This will compile `libscrypt.a` and `libscrypt.so` to the root of the repository, for static and dynamic linking respectively.
+This will compile `libscrypt.a` and `libscrypt.so`, and copy the `scrypt.h` to the repository root.
 
 Since this is a _simple_ Makefile, chances are good that it won't work for you.  
 Since this is a _simple_ Makefile, you can modify it to fit your needs.

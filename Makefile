@@ -19,6 +19,7 @@ SOURCES=$(SCRYPT)/lib/crypto/crypto_aesctr.c \
 OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 
 all: libscrypt.a libscrypt.so
+	cp $(SCRYPT)/lib/scryptenc/scryptenc.h scrypt.h
 
 $(CONFIG_H):
 	cd $(SCRYPT) && ./configure
@@ -32,5 +33,5 @@ libscrypt.so: $(CONFIG_H) $(OBJECTS)
 
 clean:
 	cd $(SCRYPT) && make clean
-	rm -f libscrypt.a libscrypt.so
+	rm -f libscrypt.a libscrypt.so scrypt.h
 	rm -rf $(OBJECTS)
