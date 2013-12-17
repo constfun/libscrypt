@@ -32,6 +32,6 @@ libscrypt.so: $(CONFIG_H) $(OBJECTS)
 	$(CC) $(CFLAGS) -shared -o $@ $(OBJECTS)
 
 clean:
-	cd $(SCRYPT) && make clean
+	cd $(SCRYPT) && make clean && rm -rf .deps Makefile config.h config.log config.status stamp-h1
 	rm -f libscrypt.a libscrypt.so scrypt.h
 	rm -rf $(OBJECTS)
